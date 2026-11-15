@@ -16,13 +16,11 @@
 
 | ID | Question | Why it matters | Suggested default |
 |---|---|---|---|
-| OQ-1 | Does your free API key return the `nutrition` object? | Calories (step 16) depend on it. | Check the real JSON in step 1. If missing, hide the calorie badge and skip step 16. |
-| OQ-2 | Is `nutrition.calories` the total for the whole recipe or per serving? | Decides whether to divide by servings. | Assume it is the whole-recipe total. Verify by roughly adding up the ingredients of one recipe. `[ASSUMPTION]` |
 | OQ-3 | What is your monthly request quota? | Each homepage load costs requests. | Check the API Ninjas dashboard before step 12. |
 | OQ-4 | How will you display one ingredient line? (names look like "Onion; chopped" and the unit is sometimes the word "unit") | The modal depends on it. | Decide in step 10 and write the rule down before coding it. |
 | OQ-5 | Does the API allow requests from the browser (CORS)? | If not, the app cannot call it directly. | Test in step 1. If it fails, stop and re-plan. |
 
-**Defaults used in this version** (you confirmed none of these, so change them freely): 4 cards on the homepage, category chips and favorites are later features, calories are a late step, and cards use a placeholder icon instead of a photo.
+**Defaults used in this version** (you confirmed none of these, so change them freely): 4 cards on the homepage, category chips and favorites are later features, and cards use a placeholder icon instead of a photo.
 
 ---
 
@@ -53,7 +51,6 @@ One anonymous user. No login and no roles. Authentication, a backend, and a data
 - **US-3:** As a user, I want to see recipes on the homepage before I search, so I get ideas.
 - **US-4:** As a user, I want a "Show more" button so I can see another recipe whenever I want.
 - **US-5:** As a user, I want to open a recipe's details to see its ingredients and steps.
-- **US-6 (later):** As a user, I want to see calories per serving so I can compare recipes.
 
 ## 5. Functional Requirements
 
@@ -69,7 +66,6 @@ One anonymous user. No login and no roles. Authentication, a backend, and a data
 | FR-8 | A search replaces the homepage cards with the search result. Clearing the search box brings the homepage cards back without new requests. | Must |
 | FR-9 | Clicking Details opens a modal with title, servings, ingredients, and numbered instructions. It makes no extra request. | Must |
 | FR-10 | The modal closes with a Close button or the Esc key. | Must |
-| FR-11 | A calorie badge ("~N kcal / serving") appears on the card and in the modal when the data is available. Built last. | Could |
 
 ## 6. Business Rules
 
@@ -83,9 +79,6 @@ One anonymous user. No login and no roles. Authentication, a backend, and a data
 | BR-6 | If a homepage request fails or returns an empty array, that card is skipped silently. No error message is shown for homepage cards. |
 | BR-7 | If all 4 initial homepage requests fail or return nothing, the homepage cards section is hidden and the search box still works. |
 | BR-8 | When two searches overlap, only the results of the latest search are shown (stale responses are ignored). |
-| BR-9 | Calories per serving (later) = `nutrition.calories` divided by the number of servings, rounded to a whole number, shown only if OQ-1 and OQ-2 are resolved. |
-| BR-10 | The number of servings is the first whole number in the `servings` text. If there is none, the calorie badge is hidden. |
-| BR-11 | A missing `nutrition` field is not an error. The badge is simply hidden. |
 
 ## 7. Workflows
 
@@ -160,7 +153,7 @@ Popular picks
 
 - One recipe is returned per request.
 - `limit`, `offset`, ingredient search, and servings rescaling are premium-only.
-- Full nutrition data is described as a premium feature (OQ-1).
+- The free tier returns a placeholder sentence instead of nutrition data, so the app does not use it.
 - Requests are denied when the monthly quota is used up. You are not charged extra.
 - Commercial use is not allowed on the free tier. Keep this a private learning project and do not publish it.
 
@@ -173,7 +166,6 @@ Popular picks
 | `servings` | string | Text like "6 servings", not a number |
 | `ingredients` | array of objects | Each has `name` (string), `quantity` (number), `unit` (string) |
 | `instructions` | array of strings | One string per step |
-| `nutrition` | optional object | Contains `calories` and more. Make it optional. |
 
 **Messy data to expect:**
 
@@ -235,7 +227,6 @@ Every page load costs 4 requests, so refreshing a lot will use your quota. That 
 | AC-12 | FR-7 | **Given** "Show more" is loading, **then** the button is disabled. |
 | AC-13 | FR-8 | **Given** I searched, **when** I clear the search box, **then** the homepage cards come back with no new requests. |
 | AC-14 | FR-9, FR-10 | **Given** a card, **when** I click Details, **then** a modal shows ingredients and numbered steps. **When** I press Esc, **then** it closes. |
-| AC-15 | FR-11, BR-9, BR-10, BR-11 | **Given** a recipe with `nutrition` and a parsable servings text, **then** "~N kcal / serving" shows on the card and in the modal. If either is missing, the badge is hidden and nothing breaks. |
 | AC-16 | Section 12 | **Given** the repository, **then** `.env` is ignored by Git. |
 
 ## 14. Build Steps
@@ -246,7 +237,7 @@ Each step leaves the app working. After each step, explain in your own words why
 
 | Step | What you build | Concept |
 |---|---|---|
-| 1 | Try the live demo on the API Ninjas recipe page, then get a key and call the API once. Look at the real JSON. Check CORS and whether `nutrition` is present. | Reading real data (OQ-1, OQ-5) |
+| 1 | Try the live demo on the API Ninjas recipe page, then get a key and call the API once. Look at the real JSON and check CORS. | Reading real data (OQ-5) |
 | 2 | Write the `Recipe` type | TypeScript interfaces |
 | 3 | Show one hard-coded recipe card. This is a temporary scaffold that you delete in step 12. | JSX, typed data, props |
 | 4 | Add the search input with its text in state | `useState`, controlled input |
@@ -272,7 +263,6 @@ Each step leaves the app working. After each step, explain in your own words why
 
 | Step | What you build | Concept |
 |---|---|---|
-| 17 | The calorie badge, per serving, hidden when data is missing | Optional fields, parsing text |
 | 18 | Cache the homepage cards in `localStorage` for the day to save quota | `localStorage`, expiry by date |
 | 19 | Replace your debounce with a package and compare the two | Libraries vs hand-written code |
 
@@ -313,7 +303,6 @@ Do not do these in advance. Do each one only when you feel the problem.
 | AS-1 | A free key works from the browser (CORS allowed). | The app cannot call the API directly. Re-plan (OQ-5). |
 | AS-2 | Recipe titles are unique enough to use as ids. | Two different recipes could be treated as one. |
 | AS-3 | A free key returns one recipe per request. | The homepage needs more or fewer requests. |
-| AS-4 | `nutrition.calories` is a whole-recipe total (OQ-2). | Per-serving calories would be wrong. |
 | AS-5 | The monthly quota is enough for 4 requests per page load during development. | Do step 18 earlier. |
 
 ## 18. Out of Scope
@@ -322,8 +311,7 @@ Do not do these in advance. Do each one only when you feel the problem.
 - Favorites, the Favorites page, and React Router (later features)
 - Category chips and category filters (later feature)
 - Recipe photos
-- The separate Nutrition API
-- Premium features: `limit`, `offset`, ingredient search, servings rescaling, nutrition filters
+- Premium features: `limit`, `offset`, ingredient search, servings rescaling
 - Recent searches and "most searched"
 - Automated tests
 - Publishing the app
