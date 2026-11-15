@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# Recipe App
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Search live recipes and open any one of them for ingredients and step-by-step instructions. Built with React, TypeScript, Vite, Tailwind CSS and shadcn/ui, on top of the [Spoonacular](https://spoonacular.com/food-api) API.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. `npm install`
+2. Copy `.env.example` to `.env` and add a free key from [spoonacular.com/food-api](https://spoonacular.com/food-api):
 
-## React Compiler
+   ```bash
+   VITE_SPOONACULAR_KEY=your_key_here
+   ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. `npm run dev`
 
-## Expanding the Oxlint configuration
+## Scripts
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the dev server |
+| `npm run build` | Type-check and build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run oxlint |
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+## Deploy to Vercel
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+1. Import the repository at [vercel.com/new](https://vercel.com/new). Vercel detects Vite: build `npm run build`, output `dist`.
+2. Add `VITE_SPOONACULAR_KEY` under **Settings → Environment Variables**, for both Production and Preview.
+3. Deploy.
+
+## API usage
+
+The free plan allows 50 points per day. A homepage load and a search cost about 1 point each; opening a recipe costs about 0.75 and is cached for the session.
+
+## Notes
+
+Vite inlines every `VITE_*` variable into the bundle, so the key is visible to anyone who opens devtools or reads the network tab. That is acceptable for a free key you can rotate. A backend proxy is the fix for a real product.
