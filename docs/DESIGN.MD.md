@@ -20,7 +20,7 @@
   - `border`: `#E4E4E7` (Zinc-200)
   - `primary`: `#18181B` (Deep zinc / charcoal for primary actions)
   - `primary-foreground`: `#FAFAFA`
-  - `accent`: `#F43F5E` (Warm rose/paprika) or `#F97316` (Warm amber) — used sparingly for badges like calorie tags and highlights.
+  - `accent`: `#F43F5E` (Warm rose/paprika) or `#F97316` (Warm amber) — used sparingly for badges and highlights.
   - `destructive`: `#EF4444` (Zinc/red for errors)
 - **Typography:**
   - Font family: Inter or Geist (`sans-serif`), clear geometric sans for UI and numeric ingredient measurements.
@@ -59,7 +59,7 @@ The app is a single-view, distraction-free container with an interactive details
      - Subtle alert box: "Something went wrong. Please try again." with retry action.
 4. **Recipe Details Modal (shadcn/ui Dialog):**
    - Accessible overlay modal (`DialogContent` max-w-2xl).
-   - Header with recipe title, servings badge, calorie badge (if available), and close icon.
+   - Header with recipe title, servings badge, and close icon.
    - Two distinct tabs or vertical sections:
      - **Ingredients List:** Checkable or bulleted items with quantities and clean ingredient names (e.g. bold quantity + unit, formatted name).
      - **Step-by-step Instructions:** Clean numbered badges with generous spacing and relaxed line height.
@@ -75,7 +75,7 @@ The app is a single-view, distraction-free container with an interactive details
 | `Button` | Search CTA, Show more, Details trigger, Close modal | `rounded-xl font-medium transition-all` |
 | `Card` | Recipe Card preview | Clean border, subtle hover elevation (`hover:border-zinc-300 hover:shadow-sm transition-all`), `rounded-2xl` |
 | `Dialog` | Recipe Details modal | `sm:max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl p-6` |
-| `Badge` | Servings, Ingredient count, Calorie badge | `variant="secondary"` with neutral tones; accent pill for calories `~N kcal / serving` |
+| `Badge` | Servings, Ingredient count | `variant="secondary"` with neutral tones |
 | `Skeleton` | Loading state cards | Pulse shimmer effect matching card shape and typography |
 
 ---
@@ -88,7 +88,6 @@ Because API Ninjas does not provide food photography, the card leverages an eleg
 - **Card Content:**
   - **Category / Meta Tag row:** Servings badge (`e.g., "4 servings"`) + Ingredient count (`"11 ingredients"`).
   - **Title:** `text-lg font-semibold tracking-tight text-zinc-900 line-clamp-2 min-h-[3.5rem]`.
-  - **Optional Calorie Pill:** `~420 kcal / serving` (if `nutrition.calories` is valid and present).
   - **Footer:** Full-width or right-aligned "View Details" / "Details" outline button that triggers the modal.
 
 ---
